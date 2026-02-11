@@ -1,1 +1,1 @@
-class_name Pierce extends AbstractResource
+class_name Pierce extends ResourceComponent

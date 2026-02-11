@@ -1,6 +1,6 @@
 @abstract
 @icon("res://Icons/node_component.svg")
-class_name AbstractResource extends AbstractComponent
+class_name ResourceComponent extends Component
 
 signal value_changed(new_value)
 signal minimum_exceeded

@@ -1,4 +1,4 @@
-class_name Velocity3D extends AbstractComponent
+class_name Velocity3D extends Component
 
 var velocity : Vector3:
 	set = set_velocity, get = get_velocity

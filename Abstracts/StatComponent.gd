@@ -1,6 +1,6 @@
 @abstract
 @icon("res://Icons/node_component.svg")
-class_name AbstractStat extends AbstractComponent
+class_name StatComponent extends Component
 
 signal value_changed(new_value : float)
 

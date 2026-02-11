@@ -1,5 +1,5 @@
 @icon("res://Icons/node2d_component.svg")
-class_name Velocity2D extends AbstractComponent
+class_name Velocity2D extends Component
 
 var velocity : Vector2:
 	set = set_velocity

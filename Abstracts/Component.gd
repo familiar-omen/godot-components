@@ -1,29 +1,29 @@
 @abstract
-class_name AbstractComponent extends Node
+class_name Component extends Node
 
 ## The location of components within the meta data of their parent
 const component_meta_location = "components"
 ## Used to prevent needless array creation when calling get_or_set
 const blank_dict : Dictionary[GDScript, Array] = {}
 ## Used to prevent needless array creation when calling get_or_set
-const blank_array : Array[AbstractComponent] = []
+const blank_array : Array[Component] = []
 
-static var fake_components : Dictionary[GDScript, AbstractComponent] = {}
+static var fake_components : Dictionary[GDScript, Component] = {}
 
 var entity : Node
 
 ## Returns a list of components of the given type attached to the target node
-static func get_components(component_script : GDScript, on : Node) -> Array[AbstractComponent]:
+static func get_components(component_script : GDScript, on : Node) -> Array[Component]:
 	return on.get_meta(component_meta_location, blank_dict).get(component_script, blank_array)
 
 ## Returns the first component of the given type attached to the target node
 ## Returns null and throws a non-blocking error if no components are registered
-static func get_component(component_script : GDScript, on : Node) -> AbstractComponent:
+static func get_component(component_script : GDScript, on : Node) -> Component:
 	return get_components(component_script, on).front()
 
 ## Returns the first component of the given type attached to the target node or its parents(recursive)
 ## Returns null and throws a non-blocking error if no component is found
-static func get_component_recursive(component_script : GDScript, on : Node)  -> AbstractComponent:
+static func get_component_recursive(component_script : GDScript, on : Node)  -> Component:
 	var value = null
 	
 	while on and not value:
@@ -32,7 +32,7 @@ static func get_component_recursive(component_script : GDScript, on : Node)  -> 
 	
 	return value.front()
 
-static func get_safe_component(component_script : GDScript, on : Node) -> AbstractComponent:
+static func get_safe_component(component_script : GDScript, on : Node) -> Component:
 	var value = get_components(component_script, on)
 	
 	if value:
@@ -46,7 +46,7 @@ static func get_safe_component(component_script : GDScript, on : Node) -> Abstra
 	
 	return value
 
-static func require_component(component_script : GDScript, on : Node) -> AbstractComponent:
+static func require_component(component_script : GDScript, on : Node) -> Component:
 	var value = get_components(component_script, on)
 	
 	if value:
@@ -59,7 +59,7 @@ static func require_component(component_script : GDScript, on : Node) -> Abstrac
 
 func _attach_component(to : Node):
 	var meta_data : Dictionary[GDScript, Array]
-	var components : Array[AbstractComponent]
+	var components : Array[Component]
 	var script = self.get_script()
 	
 	entity = to

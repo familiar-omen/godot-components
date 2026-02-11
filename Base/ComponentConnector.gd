@@ -1,11 +1,11 @@
 @icon("res://Icons/nodeXd_component.svg")
-class_name ComponentConnector extends AbstractComponent
+class_name ComponentConnector extends Component
 
 signal connected(other : Dictionary[GDScript, Interface])
 signal disconnected(other : Dictionary[GDScript, Interface])
 
 @export
-var components : Array[AbstractComponent] = []
+var components : Array[Component] = []
 var interfaces : Dictionary[GDScript, Interface] = {}
 
 var connections : Dictionary[Node, Dictionary] = {}

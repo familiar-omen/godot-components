@@ -1,1 +1,1 @@
-class_name Health extends AbstractResource
+class_name Health extends ResourceComponent

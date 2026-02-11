@@ -1,2 +1,2 @@
 @icon("res://Icons/node_component.svg")
-class_name Resistance extends AbstractStat
+class_name Resistance extends StatComponent
