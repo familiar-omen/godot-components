@@ -1,4 +1,5 @@
 @abstract
+@icon("res://godot-components/Icons/node_component.svg")
 class_name Component extends Node
 
 ## The location of components within the meta data of their parent
