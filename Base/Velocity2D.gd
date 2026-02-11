@@ -2,14 +2,32 @@
 class_name Velocity2D extends Component
 
 var velocity : Vector2:
-	set = set_velocity
+	set = set_velocity, get = get_velocity
+
+var external_property : NodePath
+
+func _component_attached():
+	if entity is CharacterBody2D:
+		external_property = ^":velocity"
+	elif entity is Node2D:
+		pass
+	else:
+		push_error("Unsupported node type: ", entity.get_script())
 
 func set_velocity(value : Vector2):
-	velocity = value
+	if external_property:
+		entity.set_indexed(external_property, value)
+	else:
+		velocity = value
+
+func get_velocity() -> Vector2:
+	if external_property:
+		return entity.get_indexed(external_property)
+	else:
+		return velocity
 
 func _physics_process(delta: float) -> void:
 	if entity is CharacterBody2D:
-		entity.velocity = velocity
 		entity.move_and_slide()
 	elif entity is Node2D:
 		entity.global_position += velocity * delta

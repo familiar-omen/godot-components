@@ -3,12 +3,15 @@ class_name Velocity3D extends Component
 var velocity : Vector3:
 	set = set_velocity, get = get_velocity
 
-## Nodepath from components entity to external property 
 var external_property : NodePath
 
 func _component_attached():
 	if entity is CharacterBody3D:
 		external_property = ^":velocity"
+	elif entity is Node3D:
+		pass
+	else:
+		push_error("Unsupported node type: ", entity.get_script())
 
 func set_velocity(value : Vector3):
 	if external_property:

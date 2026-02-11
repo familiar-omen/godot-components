@@ -17,7 +17,7 @@ func _ready() -> void:
 	
 func _component_attached():
 	if entity is RayCast3D:
-		assert(not components, "Raycasts cant expose components")
+		if components: push_error("Raycasts cant expose components")
 	elif entity is Area3D:
 		entity.area_entered.connect(add_connection)
 		entity.area_exited.connect(remove_connection)
