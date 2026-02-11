@@ -1,29 +1,42 @@
 @abstract
 class_name AbstractComponent extends Node
 
+## The location of components within the meta data of their parent
 const component_meta_location = "components"
-const owned_component_meta_location = "owned_components"
-const fake_components : Dictionary[GDScript, AbstractComponent] = {}
+## Used to prevent needless array creation when calling get_or_set
+const blank_dict : Dictionary[GDScript, Array] = {}
+## Used to prevent needless array creation when calling get_or_set
+const blank_array : Array[AbstractComponent] = []
+
+static var fake_components : Dictionary[GDScript, AbstractComponent] = {}
 
 var entity : Node
-var _next_owner
 
-func _init(initial_owner = null):
-	_next_owner = initial_owner
+## Returns a list of components of the given type attached to the target node
+static func get_components(component_script : GDScript, on : Node) -> Array[AbstractComponent]:
+	return on.get_meta(component_meta_location, blank_dict).get(component_script, blank_array)
 
-static func get_components(component_script : GDScript, on : Node, owned = false) -> Array[AbstractComponent]:
-	var default : Array[AbstractComponent] = []
-	var location = owned_component_meta_location if owned else component_meta_location
-	return on.get_meta(location, {}).get(component_script, default)
+## Returns the first component of the given type attached to the target node
+## Returns null and throws a non-blocking error if no components are registered
+static func get_component(component_script : GDScript, on : Node) -> AbstractComponent:
+	return get_components(component_script, on).front()
 
-static func get_component(component_script : GDScript, on : Node, owned = false) -> AbstractComponent:
-	return get_components(component_script, on, owned).front()
+## Returns the first component of the given type attached to the target node or its parents(recursive)
+## Returns null and throws a non-blocking error if no component is found
+static func get_component_recursive(component_script : GDScript, on : Node)  -> AbstractComponent:
+	var value = null
+	
+	while on and not value:
+		value = get_components(component_script, on)
+		on = on.get_parent()
+	
+	return value.front()
 
-static func get_safe_component(component_script : GDScript, on : Node, owned = false) -> AbstractComponent:
-	var value = get_components(component_script, on, owned)
+static func get_safe_component(component_script : GDScript, on : Node) -> AbstractComponent:
+	var value = get_components(component_script, on)
 	
 	if value:
-		value = value.front()
+		value = value[0]
 	else:
 		if fake_components.has(component_script):
 			value = fake_components.get(component_script)
@@ -33,45 +46,54 @@ static func get_safe_component(component_script : GDScript, on : Node, owned = f
 	
 	return value
 
-static func require_component(component_script : GDScript, on : Node, owned = false) -> AbstractComponent:
-	var value = get_components(component_script, on, owned)
+static func require_component(component_script : GDScript, on : Node) -> AbstractComponent:
+	var value = get_components(component_script, on)
 	
 	if value:
 		value = value.front()
 	else:
 		value = component_script.new(on)
-		on.add_child.call_deferred(value)
-		#_add_component(value, on, true)
-		#value.set.call_deferred("owner", on)
+		on.add_child(value)
 	
 	return value
 
-static func _add_component(component : AbstractComponent, to : Node, owned = false) -> Node:
-	var location = owned_component_meta_location if owned else component_meta_location
+func _attach_component(to : Node):
+	var meta_data : Dictionary[GDScript, Array]
+	var components : Array[AbstractComponent]
+	var script = self.get_script()
 	
-	if not to.has_meta(location):
-		to.set_meta(location, {})
+	entity = to
 	
-	var meta : Dictionary = to.get_meta(location)
+	meta_data = entity.get_meta(component_meta_location, blank_dict)
 	
-	var default : Array[AbstractComponent] = []
-	meta.get_or_add(component.get_script(), default).append(component)
+	if not meta_data:
+		meta_data = {}
+		entity.set_meta(component_meta_location, meta_data)
 	
-	return to
+	components = meta_data.get(script, blank_array)
+	
+	if not components:
+		components = []
+		meta_data.set(script, components)
+	
+	components.append(self)
+	
+	_component_attached()
 
-static func _remove_component(component : AbstractComponent, from : Node, owned = false) -> Node:
-	get_components(component.get_script(), from, owned).erase(component)
-	return from
+func _detach_component():
+	_component_dettached()
+	get_components(self.get_script(), entity).erase(self)
+	entity = null
+
+func _component_attached():
+	pass
+
+func _component_dettached():
+	pass
 
 func _notification(what: int) -> void:
 	match (what):
 		NOTIFICATION_PARENTED:
-			if _next_owner:
-				owner = _next_owner
-				_next_owner = null
-			entity = _add_component(self, $"..")
-			if owner: _add_component(self, owner, true)
+			_attach_component($"..")
 		NOTIFICATION_UNPARENTED:
-			_remove_component(self, entity)
-			if owner: _remove_component(self, owner, true)
-			entity = null
+			_detach_component()
