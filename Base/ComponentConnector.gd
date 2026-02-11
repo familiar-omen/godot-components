@@ -15,9 +15,7 @@ func _ready() -> void:
 		for interface in Interface.get_interfaces(component):
 			interfaces.set(interface.get_script(), interface)
 	
-func _attach_component(to : Node):
-	super(to)
-	
+func _component_attached():
 	if entity is RayCast3D:
 		assert(not components, "Raycasts cant expose components")
 	elif entity is Area3D:
@@ -26,13 +24,12 @@ func _attach_component(to : Node):
 		entity.body_entered.connect(add_connection)
 		entity.body_exited.connect(remove_connection)
 
-func _detach_component():
+func _component_dettached():
 	if entity is Area3D:
 		entity.area_entered.disconnect(add_connection)
 		entity.area_exited.disconnect(remove_connection)
 		entity.body_entered.disconnect(add_connection)
 		entity.body_exited.disconnect(remove_connection)
-	super()
 
 func _physics_process(_delta: float) -> void:
 	if entity is RayCast3D:
