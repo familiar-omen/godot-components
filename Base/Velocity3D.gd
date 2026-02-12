@@ -5,6 +5,9 @@ var velocity : Vector3:
 
 var external_property : NodePath
 
+func _init() -> void:
+	process_physics_priority = 10
+
 func _component_attached():
 	if entity is CharacterBody3D:
 		external_property = ^":velocity"
