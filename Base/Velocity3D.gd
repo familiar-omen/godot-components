@@ -1,30 +1,35 @@
 class_name Velocity3D extends Component
 
+signal velocity_changed(velocity : Vector3)
+signal velocity_length(size : float)
+
 var velocity : Vector3:
 	set = set_velocity, get = get_velocity
 
-var external_property : NodePath
+var _external_property : NodePath
 
 func _init() -> void:
 	process_physics_priority = 10
 
 func _component_attached():
 	if entity is CharacterBody3D:
-		external_property = ^":velocity"
+		_external_property = ^":velocity"
 	elif entity is Node3D:
 		pass
 	else:
 		push_error("Unsupported node type: ", entity.get_script())
 
 func set_velocity(value : Vector3):
-	if external_property:
-		entity.set_indexed(external_property, value)
+	velocity_changed.emit(value)
+	velocity_length.emit(value.length())
+	if _external_property:
+		entity.set_indexed(_external_property, value)
 	else:
 		velocity = value
 
 func get_velocity() -> Vector3:
-	if external_property:
-		return entity.get_indexed(external_property)
+	if _external_property:
+		return entity.get_indexed(_external_property)
 	else:
 		return velocity
 

@@ -1,4 +1,3 @@
-@icon("res://Icons/nodeXd_component.svg")
 class_name ComponentConnector extends Component
 
 signal connected(other : Dictionary[GDScript, Interface])
@@ -42,7 +41,7 @@ func _physics_process(_delta: float) -> void:
 func add_connection(node : Node):
 	if not node: return
 	
-	var connectors := get_components(ComponentConnector, node)
+	var connectors : ComponentConnector = Components.get_all(ComponentConnector).on(node)
 	
 	if connectors and not node in connections:
 		connections[node] = connectors.front().interfaces #TODO:: support multiple connectors per hitbox
