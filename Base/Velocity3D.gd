@@ -3,6 +3,8 @@ class_name Velocity3D extends Component
 signal velocity_changed(velocity : Vector3)
 signal velocity_length(size : float)
 
+@export_range(0, 0.4)
+var drag : float
 var velocity : Vector3:
 	set = set_velocity, get = get_velocity
 
@@ -33,3 +35,5 @@ func get_velocity() -> Vector3:
 func _physics_process(delta: float) -> void:
 	if entity is CharacterBody3D: entity.move_and_slide()
 	elif entity is Node3D: entity.global_position += velocity * delta
+	print(velocity.length())
+	velocity = velocity.normalized() * (velocity.length() - velocity.length_squared() * delta * drag)
