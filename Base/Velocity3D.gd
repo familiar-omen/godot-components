@@ -12,12 +12,9 @@ func _init() -> void:
 	process_physics_priority = 10
 
 func _component_attached():
-	if entity is CharacterBody3D:
-		_external_property = ^":velocity"
-	elif entity is Node3D:
-		pass
-	else:
-		push_error("Unsupported node type: ", entity.get_script())
+	if entity is CharacterBody3D: _external_property = ^":velocity"
+	elif entity is Node3D: pass
+	else: push_error("Unsupported node type: ", entity.get_script())
 
 func set_velocity(value : Vector3):
 	velocity_changed.emit(value)
@@ -34,7 +31,5 @@ func get_velocity() -> Vector3:
 		return velocity
 
 func _physics_process(delta: float) -> void:
-	if entity is CharacterBody3D:
-		entity.move_and_slide()
-	elif entity is Node3D:
-		entity.global_position += velocity * delta
+	if entity is CharacterBody3D: entity.move_and_slide()
+	elif entity is Node3D: entity.global_position += velocity * delta

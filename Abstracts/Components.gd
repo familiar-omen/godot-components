@@ -49,7 +49,7 @@ static func _get_or_add(core : Node, type : GDScript, iterator):
 		core.add_child(value)
 	
 	return value
-	
+
 static func _get_or_fake(core : Node, type : GDScript, iterator):
 	var value = _get_first(core, type, iterator)
 	

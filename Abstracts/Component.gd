@@ -4,6 +4,9 @@ class_name Component extends Node
 
 var entity : Node
 
+signal attached(new_entity : Node)
+signal detached(old_entity : Node)
+
 func _attach_component(to : Node):
 	var meta_data : Dictionary[GDScript, Array]
 	var components : Array[Component]
@@ -26,9 +29,11 @@ func _attach_component(to : Node):
 	components.append(self)
 	
 	_component_attached()
+	attached.emit(entity)
 
 func _detach_component():
 	_component_dettached()
+	detached.emit(entity)
 	entity.get_meta(Components.component_meta_location, Components.blank_dict).get(self.get_script(), Components.blank_array).erase(self)
 	entity = null
 
