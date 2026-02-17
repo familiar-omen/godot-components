@@ -11,6 +11,7 @@ func _init(node : Node) -> void:
 		#deregister_interface(_attached_to)
 
 func register_interface(node : Node):
+	_attached_to = node
 	var interfaces = node.get_meta("interfaces", {})
 	
 	if not node.has_meta("interfaces"):

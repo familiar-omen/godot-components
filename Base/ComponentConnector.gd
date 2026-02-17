@@ -41,7 +41,7 @@ func _physics_process(_delta: float) -> void:
 func add_connection(node : Node):
 	if not node: return
 	
-	var connectors : ComponentConnector = Components.get_all(ComponentConnector).on(node)
+	var connectors = Components.get_all(ComponentConnector).on(node) as Array[ComponentConnector]
 	
 	if connectors and not node in connections:
 		connections[node] = connectors.front().interfaces #TODO:: support multiple connectors per hitbox
